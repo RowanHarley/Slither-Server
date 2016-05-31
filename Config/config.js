@@ -1,4 +1,5 @@
 var Settings = {
+    client = "slither.io",
     port: 8080,
     bots: 0, // Not Implemented
     maxConnections: 100,
