@@ -6,7 +6,7 @@ var Player = new function(id, name, body, skin){
     this.head = body;
     this.angle = 5.69941607541398 / 2 / Math.PI * 16777215;
 
-    this.X = this.D;
+    this.X = this.angle;
     
     this.length = 10;
     
