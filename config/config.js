@@ -1,5 +1,4 @@
 module.exports = {
-    ip: "127.0.0.1",
     port: 8080,
     bots: 0, // Not Implemented
     maxConnections: 100,
