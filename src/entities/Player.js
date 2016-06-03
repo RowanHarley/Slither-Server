@@ -1,5 +1,5 @@
-var Sector = require("./utils/Sectors.js");
-var math = require("../utils/Math.js");
+//var Sector = require("./utils/Sectors.js");
+//var math = require("../utils/Math.js");
 
 var Player = new function(id, name, body, skin){
     this.speed = 5.79 * 1e3;
