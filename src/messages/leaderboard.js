@@ -1,6 +1,6 @@
 var message = require('../utils/message');
 
-//math = require('../utils/math');
+math = require('../utils/math');
 
 var type = 'l'.charCodeAt(0);
 

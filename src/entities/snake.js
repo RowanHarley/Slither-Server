@@ -37,4 +37,4 @@ module.exports = Snake = (function() {
 
 	return Snake;
 
-});
+})();

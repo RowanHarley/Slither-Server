@@ -20,38 +20,41 @@ console.log("[SERVER] Starting Server...");
 var server;
 server = new WebSocketServer({port: config["port"], path: "/slither"});
 
-console.log("[SERVER] Server Started at 127.0.0.1:" + config["port"] + " !Waiting for Connections...");
+console.log("[SERVER] Server Started at 127.0.0.1:" + config["port"] + "! Waiting for Connections...");
 server.on('error', function() {
-        console.log('[DEBUG] Error while connecting!');
+    console.log('[DEBUG] Error while connecting!');
 });
+server.on("connection", handleConnection.bind(this));
 function handleConnection(conn) {
-    if (this.clients.length >= config['max-connections']) {
-      conn.close();
-      return;
+    if (clients.length >= config['max-connections']) {
+		console.log("[SERVER] Too many connections. Closing newest connections!");
+		conn.close();
+		return;
     }
-    conn.id = ++this.counter;
-    this.clients[conn.id] = conn;
-    function close(_this, id) {
+    conn.id = ++counter;
+    clients[conn.id] = conn;
+    
+    function close(id) {
         console.log("[DEBUG] Connection closed.");
-        conn.send = function() {};
-        clearInterval(conn.snake.update);
-        delete _this.clients[id];
+		conn.send = function() {};
+        //clearInterval(conn.snake.update);
+        delete clients[id];
     }
-    conn.on('message', this.handleMessage.bind(this, conn));
-    conn.on('error', close.bind(this, conn.id));
-    conn.on('close', close.bind(this, conn.id));
-    this.send(conn.id, messages.initial);
+    conn.on('message', handleMessage.bind(this, conn));
+    conn.on('error', close.bind(conn.id));
+    conn.on('close', close.bind(conn.id));
+    send(conn.id, messages.initial);
 };
 function handleMessage(conn, data) {
     var firstByte, name, radians, secondByte, skin, speed, value, x, y;
     if (data.length === 0) {
-      return;
+		return;
     }
     if (data.length >= 227) {
-      conn.close();
+		conn.close();
     } else if (data.length === 1) {
-      value = message.readInt8(0, data);
-      if (value <= 250) {
+		value = message.readInt8(0, data);
+		if (value <= 250) {
 			console.log('Snake going to', value);
 			if (value === conn.snake.direction.angle) {
 				return;
@@ -68,7 +71,7 @@ function handleMessage(conn, data) {
 		} else if (value === 254) {
 			console.log("Snake in speed mode");
 		} else if (value === 251) {
-			this.send(conn.id, messages.pong);
+			send(conn.id, messages.pong);
 		}
     } else {
 		firstByte = message.readInt8(0, data);
@@ -80,42 +83,60 @@ function handleMessage(conn, data) {
 				x: 28907.6 * 5,
 				y: 21137.4 * 5
 			}, skin);
-			this.broadcast(messages.snake.build(conn.snake));
+			broadcast(messages.snake.build(conn.snake));
 			console.log("[DEBUG] A new snake called " + conn.snake.name + " was connected!");
-			this.spawnSnakes(conn.id);
-			conn.snake.update = setInterval((function(_this) {
+			spawnSnakes(conn.id);
+			conn.snake.update = setInterval((function() {
 				conn.snake.body.x += Math.round(Math.cos(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170);
 				conn.snake.body.y += Math.round(Math.sin(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170);
-				_this.broadcast(messages.direction.build(conn.snake.id, conn.snake.direction));
-				_this.broadcast(messages.movement.build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y));
-			})(this), 230);
+				broadcast(messages.direction.build(conn.snake.id, conn.snake.direction));
+				broadcast(messages.movement.build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y));
+			}), 230);
 			} else {
 				console.log("[ERROR] Unhandled message " + (String.fromCharCode(firstByte)));
 			}
-			this.send(conn.id, messages.leaderboard.build([conn], 1, [conn]));
-			this.send(conn.id, messages.minimap.build(this.foods));
+			send(conn.id, messages.leaderboard.build([conn], 1, [conn]));
+			send(conn.id, messages.highscore.build("Rowan", "Test Message"));
+			send(conn.id, messages.minimap.build(this.foods));
 	}
 }
 
 function spawnSnakes(id){
-	this.clients.forEach((function(_this){
+	clients.forEach((function(_this){
 		return function(client){
 			if(client.id !== id){
-				_this.send(id, messages.snake.build(client.snake));
+				send(id, messages.snake.build(client.snake));
 			}
 		};
 	})(this));
 }
 
 function send(id,data){
-	this.clients[id].send(data, {binary:true});
+	clients[id].send(data, {binary:true});
 }
 
 function broadcast(data){
-	"use strict";
+	/* "use strict";
 	for(let client in clients){
 		if(client != null){
 			client.send(data, {binary: true});
 		}
+	} */
+	for(var i = 0; i < clients.length; i++){
+		if(clients[i] != null || clients[i] != undefined){
+			clients[i].send(data, {binary: true});
+		}
 	}
 }
+/* function broadcast(data) {
+    var client, j, len, ref, results;
+    ref = this.clients;
+    results = [];
+    for (j = 0, len = ref.length; j < len; j++) {
+		client = ref[j];
+		results.push(client != null ? client.send(data, {
+			binary: true
+		}) : void 0);
+    }
+    return results;
+}; */

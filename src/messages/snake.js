@@ -3,7 +3,8 @@ var type = 's'.charCodeAt(0);
 
 exports.build = function(snake){
 	var nameLength = snake.name.length;
-	var partsLength = snake.parts.length * 2;
+	var part = snake.parts.length;
+	var partsLength = part * 2;
 	var arr = new Uint8Array(27 + nameLength + 6 + partsLength);
 	var b = 0;
 	b += message.writeInt8(b, arr, 0);
