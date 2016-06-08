@@ -1,7 +1,7 @@
 {
   "name": "Slither-Server",
   "description": "A server for slither.io",
-  "version": "0.0.1",
+  "version": "0.0.2-b",
   "repository": {
     "type": "git",
     "url": "https://github.com/RowanHarley/Slither-Server/"
