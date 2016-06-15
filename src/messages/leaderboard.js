@@ -11,7 +11,7 @@ exports.build = function(rank, players, top) {
     length += player.snake.name.length;
   }
   arr = new Uint8Array((8 + length) + (top.length * 7));
-  b = 0;
+  var b = 0;
   b += message.writeInt8(b, arr, 0);
   b += message.writeInt8(b, arr, 0);
   b += message.writeInt8(b, arr, type);

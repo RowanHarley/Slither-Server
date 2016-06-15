@@ -1,6 +1,7 @@
 var config = require("./config/config.js");
 //var spawn = require("./src/spawn.js");
-var WebSocketServer = require("ws").Server;
+var pkg = require("./package.json");
+var WebSocket = require("ws").Server;
 var snake = require("./src/entities/snake");
 var food = require("./src/entities/food");
 var sector = require("./src/entities/sector");
@@ -8,49 +9,74 @@ var messages = require("./src/messages");
 var message = require("./src/utils/message");
 var math = require("./src/utils/math");
 
-
 var counter = 0;
 var clients = [];
 var foods = [];
 var sectors = []; // Development Code
+var botCount = 1;
 
-
-
+console.log("[DEBUG] You are currently running on " + pkg.version);
 console.log("[SERVER] Starting Server...");
 var server;
-server = new WebSocketServer({port: config["port"], path: "/slither"});
-
-console.log("[SERVER] Server Started at 127.0.0.1:" + config["port"] + "! Waiting for Connections...");
-server.on('error', function() {
+server = new WebSocket({port: config["port"], path: "/slither"}, function(){
+	console.log("[SERVER] Server Started at 127.0.0.1:" + config["port"] + "! Waiting for Connections...");
+	console.log("[BOTS] Bot Status:");
+	console.log("[BOTS] Creating " + config["bots"] + " bots!");
+	console.log("[BOTS] Bots successfully loaded: " + botCount + (botCount == 0 ? "\n[BOTS] Reason: Bot's aren't implemented yet. Please try again later": ""));
+	generateFood(config["food"]);
+	generateSectors();
+});
+/* server.on('error', function() {
     console.log('[DEBUG] Error while connecting!');
 });
-server.on("connection", handleConnection.bind(this));
+console.log("[SERVER] Server Started at 127.0.0.1:" + config["port"] + "! Waiting for Connections...");
+ */
+if(server.readyState === server.OPEN){
+	server.on("connection", handleConnection.bind(server));
+}else{
+	console.log(server.readyState);
+}
 function handleConnection(conn) {
+	if(config['isDebug']){
+		console.log("[DEBUG] handleConnection() has begun");
+	}
     if (clients.length >= config['max-connections']) {
 		console.log("[SERVER] Too many connections. Closing newest connections!");
 		conn.close();
 		return;
     }
-    conn.id = ++counter;
-    clients[conn.id] = conn;
+	try {
+		conn.id = ++counter;
+		clients[conn.id] = conn;
+	}catch(e){
+		console.log("[ERROR] " + e);
+	}
     
     function close(id) {
+		console.log("[ERROR] Error!");
         console.log("[DEBUG] Connection closed.");
-		conn.send = function() {};
         //clearInterval(conn.snake.update);
         delete clients[id];
     }
     conn.on('message', handleMessage.bind(this, conn));
-    conn.on('error', close.bind(conn.id));
+	//conn.on('error', close.bind(conn.id));
+	conn.on('error', function(e){
+		console.log(e);
+		close(conn.id);
+		delete clients[conn.id];
+	});
+    
     conn.on('close', close.bind(conn.id));
     send(conn.id, messages.initial);
-};
+}
 function handleMessage(conn, data) {
     var firstByte, name, radians, secondByte, skin, speed, value, x, y;
     if (data.length === 0) {
+		console.log("[SERVER] No Data to handle!");
 		return;
     }
     if (data.length >= 227) {
+		console.log("[SERVER] Data length less than 227!");
 		conn.close();
     } else if (data.length === 1) {
 		value = message.readInt8(0, data);
@@ -74,6 +100,7 @@ function handleMessage(conn, data) {
 			send(conn.id, messages.pong);
 		}
     } else {
+		
 		firstByte = message.readInt8(0, data);
 		secondByte = message.readInt8(1, data);
 		if (firstByte === 115) {
@@ -84,35 +111,64 @@ function handleMessage(conn, data) {
 				y: 21137.4 * 5
 			}, skin);
 			broadcast(messages.snake.build(conn.snake));
+			var move = messages.movement.build(conn.id, conn.snake.direction.x, conn.snake.direction.y)
+			var dir = messages.direction.build(conn.id, conn.snake.direction);
 			console.log("[DEBUG] A new snake called " + conn.snake.name + " was connected!");
 			spawnSnakes(conn.id);
 			conn.snake.update = setInterval((function() {
 				conn.snake.body.x += Math.round(Math.cos(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170);
 				conn.snake.body.y += Math.round(Math.sin(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170);
-				broadcast(messages.direction.build(conn.snake.id, conn.snake.direction));
-				broadcast(messages.movement.build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y));
+				broadcast(dir);
+				broadcast(move);
 			}), 230);
 			} else {
 				console.log("[ERROR] Unhandled message " + (String.fromCharCode(firstByte)));
 			}
 			send(conn.id, messages.leaderboard.build([conn], 1, [conn]));
 			send(conn.id, messages.highscore.build("Rowan", "Test Message"));
-			send(conn.id, messages.minimap.build(this.foods));
+			send(conn.id, messages.minimap.build(foods));
 	}
 }
-
+function generateFood(amount) {
+    var color, i, id, results, size, x, y;
+    i = 0;
+    results = [];
+    while (i < amount) {
+		x = math.randomInt(0, 65535);
+		y = math.randomInt(0, 65535);
+		id = x * config['game-radius'] * 3 + y;
+		color = math.randomInt(0, config['foodColors']);
+		size = math.randomInt(config['foodSize'][0], config['foodSize'][1]);
+		foods.push(new food(id, {
+			x: x,
+			y: y
+		}, size, color));
+		results.push(i++);
+    }
+    return results;
+}
+function generateSectors() {
+    var i, results, sectorsAmount;
+    sectorsAmount = config['gameRadius'] / config['sectorSize'];
+    i = 0;
+    results = [];
+    while (i < sectorsAmount) {
+		results.push(i++);
+    }
+    return results;
+}
 function spawnSnakes(id){
-	clients.forEach((function(_this){
-		return function(client){
-			if(client.id !== id){
-				send(id, messages.snake.build(client.snake));
-			}
-		};
-	})(this));
+	clients.forEach(function(newClient){
+		if(newClient.id !== id){
+			send(id, messages.snake.build(newClient.snake));
+		}
+	});
 }
 
 function send(id,data){
-	clients[id].send(data, {binary:true});
+	if(clients[id]){
+		clients[id].send(data, {binary:true});
+	}
 }
 
 function broadcast(data){
@@ -123,8 +179,8 @@ function broadcast(data){
 		}
 	} */
 	for(var i = 0; i < clients.length; i++){
-		if(clients[i] != null || clients[i] != undefined){
-			clients[i].send(data, {binary: true});
+		if(clients[i]){
+			clients[i].send(data, {binary:true});
 		}
 	}
 }
@@ -140,3 +196,6 @@ function broadcast(data){
     }
     return results;
 }; */
+function close(){
+	server.close();
+}

@@ -15,7 +15,7 @@ module.exports = Snake = (function() {
 		this.speed = 5.79 * 1e3;
 		this.head = this.body;
 		this.D = 5.69941607541398 / 2 / Math.PI * 16777215;
-		this.X = this.D;
+		this.X = D;
 		this.length = 10;
 		this.J = 306;
 		this.I = 0.7810754645511785 * 16777215;

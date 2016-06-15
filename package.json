@@ -1,7 +1,7 @@
 {
   "name": "Slither-Server",
   "description": "A server for slither.io",
-  "version": "0.0.2-b",
+  "version": "0.0.2-b2",
   "repository": {
     "type": "git",
     "url": "https://github.com/RowanHarley/Slither-Server/"
@@ -10,13 +10,11 @@
     "chalk": "^1.1.3",
     "object-keys": "^1.0.9",
     "semver": "^5.1.0",
-    "ws": "^0.8.1"
+    "ws": "*"
   },
   "packageDependencies": {},
   "scripts": {
-    "start": "node ./index.js",
-    "start:prod": "npm run compile && node ./bin/slither --prod",
-    "compile": "coffee --output lib --compile src"
+    "start": "node ./index.js"
   },
   "private": true
 }
