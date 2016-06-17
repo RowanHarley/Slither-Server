@@ -111,13 +111,14 @@ function handleMessage(conn, data) {
 				y: 21137.4 * 5
 			}, skin);
 			broadcast(messages.snake.build(conn.snake));
-			var move = messages.movement.build(conn.id, conn.snake.direction.x, conn.snake.direction.y)
+			var move = messages.movement.build(conn.id, conn.snake.direction.x, conn.snake.direction.y);
 			var dir = messages.direction.build(conn.id, conn.snake.direction);
 			console.log("[DEBUG] A new snake called " + conn.snake.name + " was connected!");
 			spawnSnakes(conn.id);
 			conn.snake.update = setInterval((function() {
 				conn.snake.body.x += Math.round(Math.cos(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170);
 				conn.snake.body.y += Math.round(Math.sin(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170);
+				// This is where the error is coming from:
 				broadcast(dir);
 				broadcast(move);
 			}), 230);
@@ -174,12 +175,13 @@ function send(id,data){
 function broadcast(data){
 	/* "use strict";
 	for(let client in clients){
-		if(client != null){
+		if(client){
 			client.send(data, {binary: true});
 		}
 	} */
 	for(var i = 0; i < clients.length; i++){
 		if(clients[i]){
+			console.log("[TEST] " + data);
 			clients[i].send(data, {binary:true});
 		}
 	}
