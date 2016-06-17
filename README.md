@@ -5,3 +5,7 @@
 # Aim
 
 The aim of this project is to make a server for Slither using Node.JS.
+
+# Contributions
+
+I appreciate any contributions given in the form of pull request's.
