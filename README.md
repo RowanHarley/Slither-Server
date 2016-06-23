@@ -8,4 +8,4 @@ The aim of this project is to make a server for Slither using Node.JS.
 
 # Contributions
 
-I appreciate any contributions given in the form of pull request's.
+I appreciate any contributions given in the form of pull request's. For more details, read [CONTRIBUTING.md](https://github.com/RowanHarley/Slither-Server/blob/master/CONTRIBUTING.md)
