@@ -4,8 +4,9 @@
 
 # Aim
 
-The aim of this project is to make a server for Slither using Node.JS.
+The aim of this project is to make a server for Slither using Node.JS. It's currently at v0.0.3! If you'd like to help, please read <a href="#contributions">the Contributions section</a>
 
+<a name="contributions" href="#contributions"></a>
 # Contributions
 
 I appreciate any contributions given in the form of pull request's. For more details, read [CONTRIBUTING.md](https://github.com/RowanHarley/Slither-Server/blob/master/CONTRIBUTING.md)
