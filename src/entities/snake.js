@@ -17,8 +17,8 @@ module.exports = Snake = (function() {
 		this.D = 5.69941607541398 / 2 / Math.PI * 16777215;
 		this.X = this.D;
 		this.length = 10;
-		this.J = 306;
-		this.I = 0.7810754645511785 * 16777215;
+		this.sct = 2;
+		this.fam = 0 * 16777215;
 		this.direction = {
 			x: 0.1,
 			y: 0.1,

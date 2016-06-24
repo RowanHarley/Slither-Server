@@ -10,3 +10,4 @@ exports.food = require('./food');
 exports.sector = require('./sector');
 exports.minimap = require('./minimap');
 exports.eat = require('./eat');
+exports.end = require('./end');

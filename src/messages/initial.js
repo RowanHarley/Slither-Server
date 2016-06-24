@@ -4,7 +4,7 @@ var config = require('../../config/config.js');
 
 var arr = new Uint8Array(26);
 
-b = 0;
+var b = 0;
 
 b += message.writeInt8(b, arr, 0);
 
@@ -18,7 +18,7 @@ b += message.writeInt16(b, arr, 411);
 
 b += message.writeInt16(b, arr, config['sectorSize']);
 
-b += message.writeInt16(b, arr, 130);
+b += message.writeInt16(b, arr, 144);
 
 b += message.writeInt8(b, arr, 4.8 * 10);
 

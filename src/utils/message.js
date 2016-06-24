@@ -17,7 +17,7 @@ module.exports = {
     var byte1, byte2;
     number = Math.floor(number);
     if (number > 65535) {
-      throw new Error('Int16 out of bound');
+      throw new Error('Int16 out of bound. Current number: ' + number);
     }
     byte1 = number >> 8 & 0xFF;
     byte2 = number & 0xFF;

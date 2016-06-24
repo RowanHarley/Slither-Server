@@ -13,7 +13,12 @@ var counter = 0;
 var clients = [];
 var foods = [];
 var sectors = []; // Development Code
-var botCount = 1;
+var botCount = 0;
+var highscoreName;
+var highscoreMessage;
+var highscoreScore;
+var fmlts;
+var fpsls;
 
 console.log("[DEBUG] You are currently running on " + pkg.version);
 console.log("[SERVER] Starting Server...");
@@ -37,9 +42,6 @@ if(server.readyState === server.OPEN){
 	console.log(server.readyState);
 }
 function handleConnection(conn) {
-	if(config['isDebug']){
-		console.log("[DEBUG] handleConnection() has begun");
-	}
     if (clients.length >= config['max-connections']) {
 		console.log("[SERVER] Too many connections. Closing newest connections!");
 		conn.close();
@@ -53,7 +55,6 @@ function handleConnection(conn) {
 	}
     
     function close(id) {
-		console.log("[ERROR] Error!");
         console.log("[DEBUG] Connection closed.");
         //clearInterval(conn.snake.update);
         delete clients[id];
@@ -83,6 +84,7 @@ function handleMessage(conn, data) {
 		if (value <= 250) {
 			console.log('Snake going to', value);
 			if (value === conn.snake.direction.angle) {
+				console.log("[DEBUG] Angle is equal to last");
 				return;
 			}
 			radians = value * (Math.PI / 125);
@@ -93,17 +95,17 @@ function handleMessage(conn, data) {
 			conn.snake.direction.y = y * 127 * speed;
 			conn.snake.direction.angle = value;
 		} else if (value === 253) {
-			console.log("Snake in speed mode");
+			console.log("Snake in normal mode");
 		} else if (value === 254) {
 			console.log("Snake in speed mode");
 		} else if (value === 251) {
 			send(conn.id, messages.pong);
 		}
     } else {
-		
 		firstByte = message.readInt8(0, data);
 		secondByte = message.readInt8(1, data);
 		if (firstByte === 115) {
+			//setMscps(411);
 			skin = message.readInt8(2, data);
 			name = message.readString(3, data, data.byteLength);
 			conn.snake = new snake(conn.id, name, {
@@ -111,23 +113,34 @@ function handleMessage(conn, data) {
 				y: 21137.4 * 5
 			}, skin);
 			broadcast(messages.snake.build(conn.snake));
-			var move = messages.movement.build(conn.id, conn.snake.direction.x, conn.snake.direction.y);
-			var dir = messages.direction.build(conn.id, conn.snake.direction);
-			console.log("[DEBUG] A new snake called " + conn.snake.name + " was connected!");
+			
+			console.log((conn.snake.name == "" ? "[DEBUG] An unnamed snake" : "[DEBUG] A new snake called " + conn.snake.name) + " has connected!");
 			spawnSnakes(conn.id);
 			conn.snake.update = setInterval((function() {
 				conn.snake.body.x += Math.round(Math.cos(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170);
 				conn.snake.body.y += Math.round(Math.sin(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170);
-				// This is where the error is coming from:
-				broadcast(dir);
-				broadcast(move);
+				/*
+				
+				var R = config["gameRadius"];
+				var r = Math.pow((conn.snake.body.x - 0), 2) + Math.pow((conn.snake.body.y - 0), 2);
+				if (r < R^2){
+					messages.end.build();
+				}
+				
+				broadcast(messages.position.build(conn.snake.id, conn.snake.body.x, conn.snake.body.y));
+				*/
+				broadcast(messages.direction.build(conn.id, conn.snake.direction));
+				broadcast(messages.movement.build(conn.id, conn.snake.direction.x, conn.snake.direction.y));
 			}), 230);
-			} else {
-				console.log("[ERROR] Unhandled message " + (String.fromCharCode(firstByte)));
-			}
-			send(conn.id, messages.leaderboard.build([conn], 1, [conn]));
-			send(conn.id, messages.highscore.build("Rowan", "Test Message"));
-			send(conn.id, messages.minimap.build(foods));
+		} //else if(firstByte === 255){
+			//var message = message.readString(3, data, data.byteLength);
+			//send(conn.id, messages.highscore.build(name, message));
+		else {
+			console.log("[ERROR] Unhandled message " + (String.fromCharCode(firstByte)));
+		}
+		send(conn.id, messages.leaderboard.build([conn], clients.length, [conn]));
+		send(conn.id, messages.highscore.build("Rowan", "Test Message"));
+		send(conn.id, messages.minimap.build(foods));
 	}
 }
 function generateFood(amount) {
@@ -137,7 +150,7 @@ function generateFood(amount) {
     while (i < amount) {
 		x = math.randomInt(0, 65535);
 		y = math.randomInt(0, 65535);
-		id = x * config['game-radius'] * 3 + y;
+		id = x * config['gameRadius'] * 3 + y;
 		color = math.randomInt(0, config['foodColors']);
 		size = math.randomInt(config['foodSize'][0], config['foodSize'][1]);
 		foods.push(new food(id, {
@@ -181,23 +194,25 @@ function broadcast(data){
 	} */
 	for(var i = 0; i < clients.length; i++){
 		if(clients[i]){
-			console.log("[TEST] " + data);
 			clients[i].send(data, {binary:true});
 		}
 	}
 }
-/* function broadcast(data) {
-    var client, j, len, ref, results;
-    ref = this.clients;
-    results = [];
-    for (j = 0, len = ref.length; j < len; j++) {
-		client = ref[j];
-		results.push(client != null ? client.send(data, {
-			binary: true
-		}) : void 0);
-    }
-    return results;
-}; */
+/* function setMscps(b) {
+	var mscps = b;
+	fmlts = [];
+	fpsls = [];
+	for (b = 0; b <= mscps; b++) b >= mscps ? fmlts.push(fmlts[b - 1]) : fmlts.push(Math.pow(1 - b / mscps, 2.25)),
+	0 == b ? fpsls.push(0) : fpsls.push(fpsls[b - 1] + 1 / fmlts[b - 1]);
+	var f = fmlts[fmlts.length - 1],
+		c = fpsls[fpsls.length - 1];
+	for (b = 0; 2048 > b; b++){ 
+		fmlts.push(f);
+		fpsls.push(c);
+	}
+} */
+
 function close(){
+	console.log("[SERVER] Server Closed");
 	server.close();
 }
