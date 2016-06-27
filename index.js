@@ -56,18 +56,12 @@ function handleConnection(conn) {
     
     function close(id) {
         console.log("[DEBUG] Connection closed.");
-        //clearInterval(conn.snake.update);
+        clearInterval(conn.snake.update);
         delete clients[id];
     }
     conn.on('message', handleMessage.bind(this, conn));
-	//conn.on('error', close.bind(conn.id));
-	conn.on('error', function(e){
-		console.log(e);
-		close(conn.id);
-		delete clients[conn.id];
-	});
-    
-    conn.on('close', close.bind(conn.id));
+	conn.on('error', close.bind(conn.id));
+	conn.on('close', close.bind(conn.id));
     send(conn.id, messages.initial);
 }
 function handleMessage(conn, data) {
@@ -119,16 +113,17 @@ function handleMessage(conn, data) {
 			conn.snake.update = setInterval((function() {
 				conn.snake.body.x += Math.round(Math.cos(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170);
 				conn.snake.body.y += Math.round(Math.sin(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170);
-				/*
+				
 				
 				var R = config["gameRadius"];
-				var r = Math.pow((conn.snake.body.x - 0), 2) + Math.pow((conn.snake.body.y - 0), 2);
-				if (r < R^2){
-					messages.end.build();
+				var r = (Math.pow((conn.snake.body.x - 0), 2)) + (Math.pow((conn.snake.body.y - 0), 2));
+				if (r < Math.pow(R, 2)){
+					//console.log("[TEST] " + r + " < " + R^2);
+					console.log("[DEBUG] Outside of Radius");
+					messages.end.build(0);
+					conn.close();
 				}
-				
-				broadcast(messages.position.build(conn.snake.id, conn.snake.body.x, conn.snake.body.y));
-				*/
+				//broadcast(messages.position.build(conn.id, conn.snake.body.x, conn.snake.body.y));
 				broadcast(messages.direction.build(conn.id, conn.snake.direction));
 				broadcast(messages.movement.build(conn.id, conn.snake.direction.x, conn.snake.direction.y));
 			}), 230);
@@ -198,19 +193,23 @@ function broadcast(data){
 		}
 	}
 }
-/* function setMscps(b) {
-	var mscps = b;
-	fmlts = [];
-	fpsls = [];
-	for (b = 0; b <= mscps; b++) b >= mscps ? fmlts.push(fmlts[b - 1]) : fmlts.push(Math.pow(1 - b / mscps, 2.25)),
-	0 == b ? fpsls.push(0) : fpsls.push(fpsls[b - 1] + 1 / fmlts[b - 1]);
-	var f = fmlts[fmlts.length - 1],
-		c = fpsls[fpsls.length - 1];
-	for (b = 0; 2048 > b; b++){ 
-		fmlts.push(f);
-		fpsls.push(c);
+function setMscps(mscps) {
+	fmlts = [mscps + 1 + 2048];
+	fpsls = [mscps + 1 + 2048];
+
+	for (var i = 0; i <= mscps; i++) {
+		fmlts[i] = (i >= mscps ? fmlts[i - 1] : Math.pow(1 - 1.0 * i / mscps, 2.25));
+		fpsls[i] = (i == 0 ? 0 : fpsls[i - 1] + 1.0 / fmlts[i - 1]);
 	}
-} */
+
+	var fmltsFiller = fmlts[mscps];
+	var fpslsFiller = fpsls[mscps];
+
+	for (var i = 0; i < 2048; i++) {
+		fmlts[mscps + 1 + i] = fmltsFiller;
+		fpsls[mscps + 1 + i] = fpslsFiller;
+	}
+}
 
 function close(){
 	console.log("[SERVER] Server Closed");

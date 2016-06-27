@@ -20,8 +20,8 @@ module.exports = Snake = (function() {
 		this.sct = 2;
 		this.fam = 0 * 16777215;
 		this.direction = {
-			x: 0.1,
-			y: 0.1,
+			x: 1,
+			y: 1,
 			angle: 0
 		};
 		this.parts = [];
