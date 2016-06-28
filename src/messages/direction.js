@@ -11,6 +11,6 @@ exports.build = function(id, direction) {
 	b += message.writeInt16(b, arr, id);
 	b += message.writeInt8(b, arr, direction.angle);
 	b += message.writeInt8(b, arr, 104);
-	b += message.writeInt8(b, arr, 0);
+	b += message.writeInt8(b, arr, 1);
 	return arr;
 };

@@ -92,6 +92,8 @@ function handleMessage(conn, data) {
 			console.log("Snake in normal mode");
 		} else if (value === 254) {
 			console.log("Snake in speed mode");
+			//killPlayer(conn.id, 1);
+			messages.end.build(2);
 		} else if (value === 251) {
 			send(conn.id, messages.pong);
 		}
@@ -123,7 +125,7 @@ function handleMessage(conn, data) {
 					messages.end.build(0);
 					conn.close();
 				}
-				//broadcast(messages.position.build(conn.id, conn.snake.body.x, conn.snake.body.y));
+				broadcast(messages.position.build(conn.id, (conn.snake.body.x / 5), (conn.snake.body.y / 5)));
 				broadcast(messages.direction.build(conn.id, conn.snake.direction));
 				broadcast(messages.movement.build(conn.id, conn.snake.direction.x, conn.snake.direction.y));
 			}), 230);
@@ -192,6 +194,9 @@ function broadcast(data){
 			clients[i].send(data, {binary:true});
 		}
 	}
+}
+function killPlayer(playerId, endType){
+	broadcast(messages.end.build(endType));
 }
 function setMscps(mscps) {
 	fmlts = [mscps + 1 + 2048];

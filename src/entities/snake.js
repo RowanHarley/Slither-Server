@@ -22,7 +22,7 @@ module.exports = Snake = (function() {
 		this.direction = {
 			x: 1,
 			y: 1,
-			angle: 0
+			angle: ((0.033 * 1e3) * 0 * this.scang * this.spang)
 		};
 		this.parts = [];
 		var i = 0;
@@ -33,8 +33,9 @@ module.exports = Snake = (function() {
 			});
 			i += 2;
 		}
+		this.sc = Math.min(6, 1 + (this.parts.length - 2) / 106.0);
+		this.scang = 0.13 + 0.87 * Math.pow((7 - this.sc) / 6 , 2);
+		this.spang = Math.min(this.speed / (4.8 * 10), 1);
 	}
-
 	return Snake;
-
 })();

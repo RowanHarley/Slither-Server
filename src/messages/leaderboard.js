@@ -10,9 +10,6 @@ exports.build = function(rank, players, top) {
 		var player = top[i];
 		length += player.snake.name.length;
 	}
-	console.log("[RANK] " + rank);
-	console.log("[PLAYERS] " + players);
-	console.log("[TOP] " + top);
 	arr = new Uint8Array((8 + length) + (top.length * 7));
 	var b = 0;
 	b += message.writeInt8(b, arr, 0);
