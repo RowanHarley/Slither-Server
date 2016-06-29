@@ -1,6 +1,4 @@
-var Food;
-
-module.exports = Food = (function () {
+module.exports = (function () {
  /*
  Section: Construction
  */

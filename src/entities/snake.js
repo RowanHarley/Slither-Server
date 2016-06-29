@@ -1,8 +1,4 @@
-var Snake, math;
-
-math = require('../utils/math');
-
-module.exports = Snake = (function () {
+module.exports = (function () {
  /*
  Section: Construction
  */

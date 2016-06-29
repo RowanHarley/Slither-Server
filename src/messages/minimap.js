@@ -1,6 +1,8 @@
-var message = require('../utils/message');
+// TODO? unused for now
+// var message = require('../utils/message');
 
 var type = 'u'.charCodeAt(0);
+var exports = module.exports;
 
 exports.build = function (foods) {
     var arr = new Uint8Array(16);

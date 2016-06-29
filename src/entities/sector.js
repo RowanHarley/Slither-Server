@@ -1,6 +1,4 @@
-var Sector;
-
-module.exports = Sector = (function () {
+module.exports = (function () {
  /*
  Section: Construction
  */
