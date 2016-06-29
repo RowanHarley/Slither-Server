@@ -1,15 +1,11 @@
-var Sector;
+module.exports = (function () {
+ /*
+ Section: Construction
+ */
+    function Sector (position, foods) {
+        this.position = position;
+        this.foods = foods;
+    }
 
-module.exports = Sector = (function() {
-
-	/*
-	Section: Construction
-	*/
-	function Sector(position, foods) {
-		this.position = position;
-		this.foods = foods;
-	}
-
-	return Sector;
-
+    return Sector;
 });

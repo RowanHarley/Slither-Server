@@ -1,16 +1,13 @@
-var Food;
+module.exports = (function () {
+ /*
+ Section: Construction
+ */
+    function Food (id, position, size, color) {
+        this.id = id;
+        this.position = position;
+        this.size = size;
+        this.color = color;
+    }
 
-module.exports = Food = (function() {
-
-	/*
-	Section: Construction
-	*/
-	function Food(id, position, size, color) {
-		this.id = id;
-		this.position = position;
-		this.size = size;
-		this.color = color;
-	}
-
-	return Food;
+    return Food;
 });
