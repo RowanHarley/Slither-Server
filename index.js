@@ -1,9 +1,12 @@
+
+/*eslint-disable no-unused-vars */ // disabled some codes are stubs
+
 var config = require('./config/config.js');
 // var spawn = require("./src/spawn.js");
 var pkg = require('./package.json');
 var WebSocket = require('ws').Server;
-var snake = require('./src/entities/snake');
-var food = require('./src/entities/food');
+var Snake = require('./src/entities/snake');
+var Food = require('./src/entities/food');
 var sector = require('./src/entities/sector');
 var messages = require('./src/messages');
 var message = require('./src/utils/message');
@@ -27,7 +30,7 @@ server = new WebSocket({port: config['port'], path: '/slither'}, function () {
     console.log('[SERVER] Server Started at 127.0.0.1:' + config['port'] + '! Waiting for Connections...');
     console.log('[BOTS] Bot Status:');
     console.log('[BOTS] Creating ' + config['bots'] + ' bots!');
-    console.log('[BOTS] Bots successfully loaded: ' + botCount + (botCount == 0 ? "\n[BOTS] Reason: Bot's aren't implemented yet. Please try again later" : ''));
+    console.log('[BOTS] Bots successfully loaded: ' + botCount + (botCount === 0 ? "\n[BOTS] Reason: Bot's aren't implemented yet. Please try again later" : ''));
     generateFood(config['food']);
     generateSectors();
 });
@@ -104,15 +107,15 @@ function handleMessage (conn, data) {
  // setMscps(411);
             skin = message.readInt8(2, data);
             name = message.readString(3, data, data.byteLength);
-            conn.snake = new snake(conn.id, name, {
+            conn.snake = new Snake(conn.id, name, {
                 x: 28907.6 * 5,
                 y: 21137.4 * 5
             }, skin);
             broadcast(messages.snake.build(conn.snake));
 
-            console.log((conn.snake.name == '' ? '[DEBUG] An unnamed snake' : '[DEBUG] A new snake called ' + conn.snake.name) + ' has connected!');
+            console.log((conn.snake.name === '' ? '[DEBUG] An unnamed snake' : '[DEBUG] A new snake called ' + conn.snake.name) + ' has connected!');
             spawnSnakes(conn.id);
-            conn.snake.update = setInterval((function () {
+            conn.snake.update = setInterval(function () {
                 conn.snake.body.x += Math.round(Math.cos(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170);
                 conn.snake.body.y += Math.round(Math.sin(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170);
 
@@ -127,7 +130,7 @@ function handleMessage (conn, data) {
                 broadcast(messages.position.build(conn.id, (conn.snake.body.x / 5), (conn.snake.body.y / 5)));
                 broadcast(messages.direction.build(conn.id, conn.snake.direction));
                 broadcast(messages.movement.build(conn.id, conn.snake.direction.x, conn.snake.direction.y));
-            }), 230);
+            }, 230);
         } // else if(firstByte === 255){
  // var message = message.readString(3, data, data.byteLength);
  // send(conn.id, messages.highscore.build(name, message));
@@ -149,7 +152,7 @@ function generateFood (amount) {
         id = x * config['gameRadius'] * 3 + y;
         color = math.randomInt(0, config['foodColors']);
         size = math.randomInt(config['foodSize'][0], config['foodSize'][1]);
-        foods.push(new food(id, {
+        foods.push(new Food(id, {
             x: x,
             y: y
         }, size, color));
@@ -203,7 +206,7 @@ function setMscps (mscps) {
 
     for (var i = 0; i <= mscps; i++) {
         fmlts[i] = (i >= mscps ? fmlts[i - 1] : Math.pow(1 - 1.0 * i / mscps, 2.25));
-        fpsls[i] = (i == 0 ? 0 : fpsls[i - 1] + 1.0 / fmlts[i - 1]);
+        fpsls[i] = (i === 0 ? 0 : fpsls[i - 1] + 1.0 / fmlts[i - 1]);
     }
 
     var fmltsFiller = fmlts[mscps];
