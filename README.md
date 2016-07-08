@@ -4,6 +4,10 @@
 
 The aim of this project is to make a server for Slither using Node.JS. It's currently at v0.0.3! If you'd like to help, please read <a href="#contributions">the Contributions section</a>
 
+## How To Connect
+
+If you are having trouble connecting, please read the [wiki page](https://github.com/RowanHarley/Slither-Server/wiki/Connecting-To-The-Server).
+
 ## Roadmap
 
 For our roadmap, visit our [wiki page](https://github.com/RowanHarley/Slither-Server/wiki/Roadmap).
