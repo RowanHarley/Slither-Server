@@ -10,13 +10,14 @@ If you are having trouble connecting, please read the [wiki page](https://github
 
 ## Roadmap
 
-For our roadmap, visit our [wiki page](https://github.com/RowanHarley/Slither-Server/wiki/Roadmap).
+For our full roadmap, visit our [wiki page](https://github.com/RowanHarley/Slither-Server/wiki/Roadmap).
 Some of the features we hope to add are:
 
+- [ ] Full snake movement ([HELP NEEDED](https://github.com/RowanHarley/Slither-Server/issues/15))
 - [ ] Bots
 - [ ] Commands through Console
 - [ ] Multiple Server Support (Meaning you can have players play on different, smaller servers)
-- [ ] Ability to set (and save) highscores (You currently have to set them in the code)
+- [x] Ability to set (and save) highscores (You currently have to set them in the code)(Coming in 0.0.5)
 - [ ] ...
 
 If you have any suggestions, please feel free to comment them [here](https://github.com/RowanHarley/Slither-Server/issues/1)
