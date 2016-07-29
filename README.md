@@ -21,6 +21,14 @@ Some of the features we hope to add are:
 - [ ] ...
 
 If you have any suggestions, please feel free to comment them [here](https://github.com/RowanHarley/Slither-Server/issues/1)
+
+<a name = "beta-versions" href="#beta-versions"></a>
+
+## Beta Version's
+
+If you wish to try out the beta versions, I have created a branch which you can download beta version's from. I'd recommend using 0.0.3 for a better performance and less bugs
+
+
 <a name="contributions" href="#contributions"></a>
 
 ## Contributions
