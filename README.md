@@ -2,7 +2,7 @@
 
 ## Aim
 
-The aim of this project is to make a server for Slither using Node.JS. It's currently at v0.0.3! If you'd like to help, please read <a href="#contributions">the Contributions section</a>
+The aim of this project is to make a server for Slither using Node.JS. It's currently at v0.0.5b2 although v0.0.3 is the recommended version! If you'd like to help, please read <a href="#contributions">the Contributions section</a>
 
 ## How To Connect
 
