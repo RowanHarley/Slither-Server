@@ -1,10 +1,10 @@
 {
   "name": "Slither-Server",
   "description": "A Server for Slither.io",
-  "version": "0.0.5b2",
+  "version": "0.0.5b3",
   "repository": {
     "type": "git",
-    "url": "https://github.com/RowanHarley/Slither-Server/"
+    "url": "https://github.com/RowanHarley/Slither-Server"
   },
   "dependencies": {
     "chalk": "^1.1.3",
@@ -17,7 +17,6 @@
     "start": "node ./index.js",
     "lint": "eslint ./index.js ./config/**/*.js ./src/**/*.js"
   },
-  "private": true,
   "devDependencies": {
     "eslint": "^2.13.1",
     "eslint-config-standard": "^5.3.1",

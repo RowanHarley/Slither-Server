@@ -29,7 +29,7 @@ module.exports = {
         var byte1;
         number = Math.floor(number);
         if (number > 255) {
-            throw new Error('Int8 out of bound');
+            throw new Error('Int8 out of bound. Current Number: ' + number);
         }
         byte1 = number & 0xFF;
         data[offset] = byte1;

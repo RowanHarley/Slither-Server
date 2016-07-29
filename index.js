@@ -17,11 +17,13 @@ var clients = [];
 var foods = [];
 var sectors = []; // Development Code
 var botCount = 0;
-var highscoreName;
-var highscoreMessage;
+var highscoreName = "Rowan";
+var highscoreMessage = "Get this project at: www.github.com/RowanHarley/Slither-Server";
 var highscoreScore;
 var fmlts;
 var fpsls;
+var lastmsg = 0;
+var thismsg = 0;
 
 console.log('[DEBUG] You are currently running on ' + pkg.version);
 console.log('[SERVER] Starting Server...');
@@ -127,9 +129,13 @@ function handleMessage (conn, data) {
                     messages.end.build(0);
                     conn.close();
                 }
-                broadcast(messages.position.build(conn.id, (conn.snake.body.x / 5), (conn.snake.body.y / 5)));
-                broadcast(messages.direction.build(conn.id, conn.snake.direction));
-                broadcast(messages.movement.build(conn.id, conn.snake.direction.x, conn.snake.direction.y));
+				
+				clients[conn.id].lastmsg = clients[conn.id].thismsg;
+				clients[conn.id].thismsg = Date.now();
+				var timebetween = clients[conn.id].thismsg - clients[conn.id].lastmsg;
+                broadcast(messages.position.build(conn.id, (conn.snake.body.x / 5), (conn.snake.body.y / 5)), timebetween);
+                broadcast(messages.direction.build(conn.id, conn.snake), timebetween);
+                broadcast(messages.movement.build(conn.id, conn.snake.direction.x, conn.snake.direction.y), timebetween);
             }, 230);
         } // else if(firstByte === 255){
  // var message = message.readString(3, data, data.byteLength);

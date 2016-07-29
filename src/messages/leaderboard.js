@@ -3,10 +3,9 @@ var message = require('../utils/message');
 var math = require('../utils/math');
 
 var type = 'l'.charCodeAt(0);
-// FIXME: use correct array..
-var arr = new Uint8Array(16);
 
 exports.build = function (rank, players, top) {
+	var arr;
     var length = 0;
     for (var i = 0, len = top.length; i < len; i++) {
         var player = top[i];
