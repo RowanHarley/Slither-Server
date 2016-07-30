@@ -22,8 +22,6 @@ var highscoreMessage = "Get this project at: www.github.com/RowanHarley/Slither-
 var highscoreScore;
 var fmlts;
 var fpsls;
-var lastmsg = 0;
-var thismsg = 0;
 
 console.log('[DEBUG] You are currently running on ' + pkg.version);
 console.log('[SERVER] Starting Server...');
@@ -110,8 +108,8 @@ function handleMessage (conn, data) {
             skin = message.readInt8(2, data);
             name = message.readString(3, data, data.byteLength);
             conn.snake = new Snake(conn.id, name, {
-                x: 28907.6 * 5,
-                y: 21137.4 * 5
+                x: 28907.6,
+                y: 21137.4
             }, skin);
             broadcast(messages.snake.build(conn.snake));
 
@@ -130,12 +128,9 @@ function handleMessage (conn, data) {
                     conn.close();
                 }
 				
-				clients[conn.id].lastmsg = clients[conn.id].thismsg;
-				clients[conn.id].thismsg = Date.now();
-				var timebetween = clients[conn.id].thismsg - clients[conn.id].lastmsg;
-                broadcast(messages.position.build(conn.id, (conn.snake.body.x / 5), (conn.snake.body.y / 5)), timebetween);
-                broadcast(messages.direction.build(conn.id, conn.snake), timebetween);
-                broadcast(messages.movement.build(conn.id, conn.snake.direction.x, conn.snake.direction.y), timebetween);
+                broadcast(messages.position.build(conn.id, conn.snake));
+                broadcast(messages.direction.build(conn.id, conn.snake));
+                //broadcast(messages.movement.build(conn.id, conn.snake));
             }, 230);
         } // else if(firstByte === 255){
  // var message = message.readString(3, data, data.byteLength);
@@ -185,24 +180,22 @@ function spawnSnakes (id) {
 }
 
 function send (id, data) {
-    if (clients[id]) {
-        clients[id].send(data, {binary: true});
+    client = clients[id];
+    if (client) {
+        currentTime = Date.now();
+        deltaTime = client.lastTime ? currentTime - client.lastTime : 0;
+        client.lastTime = currentTime;
+        message.writeInt16(0, data, deltaTime);
+        client.send(data, {binary: true});
     }
 }
 
 function broadcast (data) {
- /* "use strict";
- for(let client in clients){
- if(client){
- client.send(data, {binary: true});
- }
- } */
     for (var i = 0; i < clients.length; i++) {
-        if (clients[i]) {
-            clients[i].send(data, {binary: true});
-        }
+        send(i, data);
     }
 }
+
 function killPlayer (playerId, endType) {
     broadcast(messages.end.build(endType));
 }
