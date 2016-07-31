@@ -12,6 +12,7 @@ var messages = require('./src/messages');
 var message = require('./src/utils/message');
 var math = require('./src/utils/math');
 
+var loopInterval = 230;
 var counter = 0;
 var clients = [];
 var foods = [];
@@ -65,7 +66,6 @@ function handleConnection (conn) {
     conn.on('message', handleMessage.bind(this, conn));
     conn.on('error', close.bind(conn.id));
     conn.on('close', close.bind(conn.id));
-    send(conn.id, messages.initial);
 }
 function handleMessage (conn, data) {
     var firstByte, name, radians, secondByte, skin, speed, value, x, y;
@@ -79,24 +79,24 @@ function handleMessage (conn, data) {
     } else if (data.length === 1) {
         value = message.readInt8(0, data);
         if (value <= 250) {
-            console.log('Snake going to', value);
+            // console.log('Snake going to', value);
             if (value === conn.snake.direction.angle) {
                 console.log('[DEBUG] Angle is equal to last');
                 return;
             }
-            radians = value * (Math.PI / 125);
+            radians = value * 2*Math.PI / 251;
             speed = 1;
             x = Math.cos(radians) + 1;
             y = Math.sin(radians) + 1;
             conn.snake.direction.x = x * 127 * speed;
             conn.snake.direction.y = y * 127 * speed;
-            conn.snake.direction.angle = value;
+            conn.snake.direction.angle = radians;
         } else if (value === 253) {
             console.log('Snake in normal mode');
         } else if (value === 254) {
             console.log('Snake in speed mode');
  // killPlayer(conn.id, 1);
-            messages.end.build(2);
+            //messages.end.build(2);
         } else if (value === 251) {
             send(conn.id, messages.pong);
         }
@@ -111,17 +111,19 @@ function handleMessage (conn, data) {
                 x: 28907.6,
                 y: 21137.4
             }, skin);
+            send(conn.id, messages.initial);
             broadcast(messages.snake.build(conn.snake));
 
             console.log((conn.snake.name === '' ? '[DEBUG] An unnamed snake' : '[DEBUG] A new snake called ' + conn.snake.name) + ' has connected!');
             spawnSnakes(conn.id);
             conn.snake.update = setInterval(function () {
-                conn.snake.body.x += Math.cos(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170;
-                conn.snake.body.y += Math.sin(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170;
+                var distance = conn.snake.speed * loopInterval / 8;
+                conn.snake.body.x += Math.cos(conn.snake.direction.angle) * distance;
+                conn.snake.body.y += Math.sin(conn.snake.direction.angle) * distance;
 
                 var R = config['gameRadius'];
-                var r = (Math.pow((conn.snake.body.x - 0), 2)) + (Math.pow((conn.snake.body.y - 0), 2));
-                if (r < Math.pow(R, 2)) {
+                var r = (Math.pow((conn.snake.body.x - R), 2)) + (Math.pow((conn.snake.body.y - R), 2));
+                if (r > Math.pow(R, 2)) {
  // console.log("[TEST] " + r + " < " + R^2);
                     console.log('[DEBUG] Outside of Radius');
                     messages.end.build(0);
@@ -131,7 +133,7 @@ function handleMessage (conn, data) {
                 broadcast(messages.position.build(conn.id, conn.snake));
                 broadcast(messages.direction.build(conn.id, conn.snake));
                 //broadcast(messages.movement.build(conn.id, conn.snake));
-            }, 230);
+            }, loopInterval);
         } // else if(firstByte === 255){
  // var message = message.readString(3, data, data.byteLength);
  // send(conn.id, messages.highscore.build(name, message));
@@ -180,10 +182,10 @@ function spawnSnakes (id) {
 }
 
 function send (id, data) {
-    client = clients[id];
+    var client = clients[id];
     if (client) {
-        currentTime = Date.now();
-        deltaTime = client.lastTime ? currentTime - client.lastTime : 0;
+        var currentTime = Date.now();
+        var deltaTime = client.lastTime ? currentTime - client.lastTime : 0;
         client.lastTime = currentTime;
         message.writeInt16(0, data, deltaTime);
         client.send(data, {binary: true});
