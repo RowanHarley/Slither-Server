@@ -116,8 +116,8 @@ function handleMessage (conn, data) {
             console.log((conn.snake.name === '' ? '[DEBUG] An unnamed snake' : '[DEBUG] A new snake called ' + conn.snake.name) + ' has connected!');
             spawnSnakes(conn.id);
             conn.snake.update = setInterval(function () {
-                conn.snake.body.x += Math.round(Math.cos(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170);
-                conn.snake.body.y += Math.round(Math.sin(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170);
+                conn.snake.body.x += Math.cos(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170;
+                conn.snake.body.y += Math.sin(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170;
 
                 var R = config['gameRadius'];
                 var r = (Math.pow((conn.snake.body.x - 0), 2)) + (Math.pow((conn.snake.body.y - 0), 2));
