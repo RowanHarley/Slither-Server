@@ -126,7 +126,13 @@ function handleMessage (conn, data) {
                 if (r > Math.pow(R, 2)) {
  // console.log("[TEST] " + r + " < " + R^2);
                     console.log('[DEBUG] Outside of Radius');
-                    messages.end.build(0);
+					var arr = new Uint8Array(6);
+					message.writeInt8(2, arr, "s".charCodeAt(0));
+					message.writeInt16(3, arr, conn.id);
+					message.writeInt8(5, arr, 1);
+					broadcast(arr);
+                    messages.end.build(2);
+					delete clients[conn.id];
                     conn.close();
                 }
 				
