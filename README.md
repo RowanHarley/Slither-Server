@@ -3,7 +3,7 @@
 ## Table of Contents
 
 - 1. [Aim](#aim)
-- 2. [How to Connect](#howtoconnect)
+- 2. [How to Connect](#how-to-connect)
 - 3. [Roadmap](#roadmap)
 - 4. [Beta Version's](#beta-versions)
 - 5. [Contributions](#contributions)
@@ -14,7 +14,7 @@
 
 The aim of this project is to make a server for Slither using Node.JS. It's currently at v0.0.5b2 although v0.0.3 is the recommended version! If you'd like to help, please read <a href="#contributions">the Contributions section</a>
 
-<a name = "howtoconnect" href="#howtoconnect"></a>
+<a name = "howtoconnect" href="#how-to-connect"></a>
 
 ## How To Connect
 
