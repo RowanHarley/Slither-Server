@@ -131,7 +131,7 @@ function handleMessage (conn, data) {
 					message.writeInt16(3, arr, conn.id);
 					message.writeInt8(5, arr, 1);
 					broadcast(arr);
-                    messages.end.build(2);
+                    messages.end.build(0);
 					delete clients[conn.id];
                     conn.close();
                 }
@@ -189,7 +189,7 @@ function spawnSnakes (id) {
 
 function send (id, data) {
     var client = clients[id];
-    if (client) {
+    if (client/* && client.readyState == client.OPEN */) {
         var currentTime = Date.now();
         var deltaTime = client.lastTime ? currentTime - client.lastTime : 0;
         client.lastTime = currentTime;
