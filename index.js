@@ -123,9 +123,7 @@ function handleMessage (conn, data) {
 
                 var R = config['gameRadius'];
                 var r = (Math.pow((conn.snake.body.x - R), 2)) + (Math.pow((conn.snake.body.y - R), 2));
-                if (r > Math.pow(R, 2)) {
- // console.log("[TEST] " + r + " < " + R^2);
-                    console.log('[DEBUG] Outside of Radius');
+                if (r > Math.pow(R, 2)) {console.log('[DEBUG] Outside of Radius');
 					var arr = new Uint8Array(6);
 					message.writeInt8(2, arr, "s".charCodeAt(0));
 					message.writeInt16(3, arr, conn.id);
