@@ -57,15 +57,14 @@ function handleConnection (conn) {
     } catch (e) {
         console.log('[ERROR] ' + e);
     }
-
-    function close (id) {
-        console.log('[DEBUG] Connection closed.');
-        clearInterval(conn.snake.update);
-        delete clients[id];
-    }
-    conn.on('message', handleMessage.bind(this, conn));
+	conn.on('message', handleMessage.bind(this, conn));
     conn.on('error', close.bind(conn.id));
-    conn.on('close', close.bind(conn.id));
+    conn.on('close', function(){
+		console.log('[DEBUG] Connection closed.');
+		messages.end.build(2);
+        clearInterval(conn.snake.update);
+        delete clients[conn.id];
+	});
 }
 function handleMessage (conn, data) {
     var firstByte, name, radians, secondByte, skin, speed, value, x, y;
@@ -123,7 +122,9 @@ function handleMessage (conn, data) {
 
                 var R = config['gameRadius'];
                 var r = (Math.pow((conn.snake.body.x - R), 2)) + (Math.pow((conn.snake.body.y - R), 2));
-                if (r > Math.pow(R, 2)) {console.log('[DEBUG] Outside of Radius');
+                if (r > Math.pow(R, 2)) {
+ // console.log("[TEST] " + r + " < " + R^2);
+                    console.log('[DEBUG] Outside of Radius');
 					var arr = new Uint8Array(6);
 					message.writeInt8(2, arr, "s".charCodeAt(0));
 					message.writeInt16(3, arr, conn.id);
