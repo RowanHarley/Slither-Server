@@ -1,4 +1,4 @@
-# Slither-Server ![npm-deps](https://david-dm.org/RowanHarley/Slither-Server.svg)
+# Slither-Server
 
 ## Table of Contents
 
@@ -12,7 +12,7 @@
 
 ## Aim
 
-The aim of this project is to make a server for Slither using Node.JS. It's currently at v0.0.5b6 although v0.0.3 is the recommended version! If you'd like to help, please read <a href="#contributions">the Contributions section</a>
+The aim of this project is to make a server for Slither using Node.JS. It's currently at v0.0.5! If you'd like to help, please read <a href="#contributions">the Contributions section</a>
 
 <a name = "howtoconnect" href="#how-to-connect"></a>
 
@@ -31,7 +31,7 @@ Some of the features we hope to add are:
 - [ ] Bots
 - [ ] Commands through Console
 - [ ] Multiple Server Support (Meaning you can have players play on different, smaller servers)
-- [x] Ability to set (and save) highscores (You currently have to set them in the code)(Coming in 0.0.6)
+- [ ] Ability to set (and save) highscores (You currently have to set them in the code)(Coming in 0.0.6)
 - [ ] ...
 
 If you have any suggestions, please feel free to comment them [here](https://github.com/RowanHarley/Slither-Server/issues/1)
@@ -40,7 +40,7 @@ If you have any suggestions, please feel free to comment them [here](https://git
 
 ## Beta Version's
 
-If you wish to try out the beta versions, I have created a branch which you can download beta version's from. I'd recommend using 0.0.3 for a better performance and less bugs although 0.0.5b6 is a stable release
+If you wish to try out the beta versions, go to the [Releases](https://github.com/RowanHarley/Slither-Server/releases) page and download any of the pre-releases. I'd recommend using 0.0.5 for better performance and less bugs!
 
 
 <a name="contributions" href="#contributions"></a>
