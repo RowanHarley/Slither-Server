@@ -18,9 +18,8 @@ var clients = [];
 var foods = [];
 var sectors = []; // Development Code
 var botCount = 0;
-var highscoreName = "Rowan";
-var highscoreMessage = "Get this project at: www.github.com/RowanHarley/Slither-Server";
-var highscoreScore;
+var highscoreName = config["highscoreName"];
+var highscoreMessage = config["highscoreMsg"];
 var fmlts;
 var fpsls;
 
@@ -29,9 +28,9 @@ console.log('[SERVER] Starting Server...');
 var server;
 server = new WebSocket({port: config['port'], path: '/slither'}, function () {
     console.log('[SERVER] Server Started at 127.0.0.1:' + config['port'] + '! Waiting for Connections...');
-    console.log('[BOTS] Bot Status:');
-    console.log('[BOTS] Creating ' + config['bots'] + ' bots!');
-    console.log('[BOTS] Bots successfully loaded: ' + botCount + (botCount === 0 ? "\n[BOTS] Reason: Bot's aren't implemented yet. Please try again later" : ''));
+    console.log("[BOTS] Bot Status: Bot's are currently unavailable! Please try again later.");
+    //console.log('[BOTS] Creating ' + config['bots'] + ' bots!');
+    //console.log('[BOTS] Bots successfully loaded: ' + botCount + (botCount === 0 ? "\n[BOTS] Reason: Bot's aren't implemented yet. Please try again later" : ''));
     generateFood(config['food']);
     generateSectors();
 });
@@ -130,9 +129,11 @@ function handleMessage (conn, data) {
 					message.writeInt16(3, arr, conn.id);
 					message.writeInt8(5, arr, 1);
 					broadcast(arr);
-                    messages.end.build(0);
+					broadcast(messages.end.build(1));
+					//sleep(1000);
 					delete clients[conn.id];
-                    conn.close();
+					conn.close();
+					}
                 }
 				
                 broadcast(messages.position.build(conn.id, conn.snake));
@@ -140,13 +141,15 @@ function handleMessage (conn, data) {
                 //broadcast(messages.movement.build(conn.id, conn.snake));
             }, loopInterval);
         } // else if(firstByte === 255){
- // var message = message.readString(3, data, data.byteLength);
- // send(conn.id, messages.highscore.build(name, message));
+			// var msg = message.readString(3, data, data.byteLength);
+			// send(conn.id, messages.highscore.build(conn.snake.name, msg));
+			// delete clients[conn.id];
+			// conn.close();
         else {
             console.log('[ERROR] Unhandled message ' + (String.fromCharCode(firstByte)));
         }
         send(conn.id, messages.leaderboard.build([conn], clients.length, [conn]));
-        send(conn.id, messages.highscore.build('Rowan', 'Test Message'));
+        send(conn.id, messages.highscore.build(highscoreName, highscoreMessage));
         send(conn.id, messages.minimap.build(foods));
     }
 }
@@ -202,7 +205,14 @@ function broadcast (data) {
         send(i, data);
     }
 }
-
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
 function killPlayer (playerId, endType) {
     broadcast(messages.end.build(endType));
 }
