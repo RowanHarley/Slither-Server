@@ -122,18 +122,17 @@ function handleMessage (conn, data) {
                 var R = config['gameRadius'];
                 var r = (Math.pow((conn.snake.body.x - R), 2)) + (Math.pow((conn.snake.body.y - R), 2));
                 if (r > Math.pow(R, 2)) {
- // console.log("[TEST] " + r + " < " + R^2);
+					// console.log("[TEST] " + r + " < " + R^2);
                     console.log('[DEBUG] Outside of Radius');
 					var arr = new Uint8Array(6);
 					message.writeInt8(2, arr, "s".charCodeAt(0));
 					message.writeInt16(3, arr, conn.id);
 					message.writeInt8(5, arr, 1);
 					broadcast(arr);
-					broadcast(messages.end.build(1));
+					broadcast(messages.end.build(0));
 					//sleep(1000);
 					delete clients[conn.id];
 					conn.close();
-					}
                 }
 				
                 broadcast(messages.position.build(conn.id, conn.snake));
@@ -204,14 +203,6 @@ function broadcast (data) {
     for (var i = 0; i < clients.length; i++) {
         send(i, data);
     }
-}
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
 }
 function killPlayer (playerId, endType) {
     broadcast(messages.end.build(endType));
